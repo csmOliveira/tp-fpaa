@@ -1,4 +1,5 @@
   import java.util.*;
+  import Utilitarios.*;
 
   public class Backtracking {
     public static List<List<Integer>> distribuicaoRotas(int[] rotasCandidatas, int distanciaAlvo) {
@@ -26,11 +27,31 @@
         }
       }
     }
+  
+  public static int getDistanciaAlvo(int conjunto[]) {
+    int totalSoma = 0;
+
+    for(int i = 0; i < conjunto.length; i++) {
+      totalSoma += conjunto[i];
+    }
+
+    return totalSoma/3;
+  }
+
+  public static void printRotas(List<List<Integer>> rotas) {
+    rotas.forEach(item -> System.out.println(item));
+    System.out.println();
+  }
 
   public static void main(String[] args) {
-    int[] rotasCandidatas = {10,11,11,11,12,13,14,15,16};
-    int distanciaAlvo = 37;
-
-    distribuicaoRotas(rotasCandidatas, distanciaAlvo).forEach(i -> System.out.println(i));
-  }
+   List<int[]> rotas = GeradorDeProblemas.geracaoDeRotas(6,10,0.6);
+   List<int[]> distribuicaoFinalRota;
+   List<List<Integer>> possiveisDistribuicoes;
+   for(int i = 0; i < rotas.size(); i++) {
+      // Separar em outra função
+      int distanciaAlvo = getDistanciaAlvo(rotas.get(i));
+      possiveisDistribuicoes = distribuicaoRotas(rotas.get(i), distanciaAlvo);
+      printRotas(possiveisDistribuicoes);
+    }
+  } 
 }
