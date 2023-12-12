@@ -36,29 +36,15 @@
     }
     return totalSoma/qtd; 
   } 
-  public static List<List<Integer>> distribuirRotas(List<List<Integer>> possibilidades) { 
-    List<List<Integer>> rotas = new ArrayList<List<Integer>>(3); rotas.add(new ArrayList());
-    rotas.add(new ArrayList());
-    rotas.add(new ArrayList());
-
-    rotas.get(0).addAll(possibilidades.get(0));
-    rotas.get(1).addAll(possibilidades.get(1));
-    rotas.get(2).addAll(possibilidades.get(2));
-    
-  /*  for(int i = 0; i < possibilidades.size(); i++) {
-      if(i > 2) {
-        rotas.get(i%3).addAll(possibilidades.get(i));
-      } else {
-        rotas.get(i).addAll(possibilidades.get(i));
-      }
-    }*/
-
+  public static List<List<Integer>> distribuirRotas(List<List<Integer>> possibilidades, List<List<Integer>> rotas, int next) {
+    rotas.add(next, possibilidades.get(0));
     return rotas;
   }
 
   public static List<Integer> atualizarTeste(List<List<Integer>> possibilidades, List<Integer> testes) {
-    for(int i = 0; i < possibilidades.size(); i++) {
-      testes.removeAll(possibilidades.get(i));
+    List<Integer>remover = new ArrayList<Integer>(possibilidades.get(0));
+    for(int i = 0; i < remover.size(); i++) {
+      testes.remove(remover.get(i));
     }
 
     return testes;
@@ -106,46 +92,74 @@
   public static List<List<Integer>> resolver(List<Integer> conjTeste) {
     List<List<Integer>> distPossiveis;
     List<List<Integer>> distribuicao = new ArrayList<List<Integer>>(3);
+
     int alvo = getDistanciaAlvo(conjTeste, 3);
 
     distPossiveis = distribuicaoRotas(conjTeste, alvo);
-    while(conjTeste.size() > 3) {
+    while(distPossiveis.size() > 3) {
       int i = 0;
+      int next = 0;
 
       while(distPossiveis.size() == 0 && i < alvo) {
         distPossiveis = distribuicaoRotas(conjTeste, alvo + i);
         i += 1;
       } 
-
-      distribuicao = distribuirRotas(distPossiveis);
+      
+      distribuicao = distribuirRotas(distPossiveis, distribuicao, next);
       conjTeste = atualizarTeste(distPossiveis, conjTeste);
+      next++;
       
       alvo = getDistanciaAlvo(conjTeste, 3);
       distPossiveis = distribuicaoRotas(conjTeste, alvo);
 
     }
+
     
+    if(distribuicao.size() < 2) {
+      List<Integer> temp = new ArrayList<Integer>(); 
+      temp.add(conjTeste.get(0));
+      distribuicao.add(temp);
+      
+      temp.remove(0);
+      temp.add(conjTeste.get(1));
+      distribuicao.add(temp);
+
+      conjTeste.remove(0);
+      conjTeste.remove(1);
+    }
+    else if(distribuicao.size() < 3) {
+      List<Integer> temp = new ArrayList<Integer>();
+      temp.add(conjTeste.get(0));
+      
+      distribuicao.add(temp);
+      conjTeste.remove(0);
+    }
+
     for(int i = 0; i < conjTeste.size(); i++) {
-      //distribuicao.get(2 - i).add(conjTeste.get(i));
       distribuicao.get(indexMenorDistancia(distribuicao)).add(conjTeste.get(i));
     }
+    
 
     return distribuicao;
   }
 
   public static void main(String[] args) {
     List<List<Integer>> distribuicaoDasRotas;
+    double tempDecorrido = 0.0;
+    Relogio r = new Relogio();
 
     System.out.println("Conjunto 01: ");
     int[] rotasCandidatas = {40,36,38,29,32,28,31,35,31,30,32,30,29,39,35,38,39,35,32,38,32,33,29,33,29,39,28};
     distribuicaoDasRotas = resolver(converterParaLista(rotasCandidatas));
     printDistribuicaoRotas(distribuicaoDasRotas);
-    System.out.println();
+    tempDecorrido = r.tempoDecorrido();
+    System.out.println("Tempo: " + tempDecorrido);
 
     System.out.println("Conjunto 02: ");
     int[] rotasCandidatas2 = {32,51,32,43,42,30,42,51,43,51,29,25,27,32,29,55,43,29,32,44,55,29,53,30,24,27};
     distribuicaoDasRotas = resolver(converterParaLista(rotasCandidatas2));
     printDistribuicaoRotas(distribuicaoDasRotas);
     System.out.println();
+
   } 
 }
