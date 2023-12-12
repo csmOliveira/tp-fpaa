@@ -2,11 +2,11 @@
   import Utilitarios.*;
 
   public class Backtracking {
-    public static List<List<Integer>> distribuicaoRotas(List<Integer> rotasCandidatas, int distanciaAlvo) {
-      Collections.sort(rotasCandidatas);
+    public static List<List<Integer>> distribuicaoRotas(List<Integer> candidatos, int distanciaAlvo) {
+      Collections.sort(candidatos);
       List<List<Integer>> solucao = new ArrayList<List<Integer>>();
       List<Integer> solucoesCandidatas = new ArrayList<Integer>();
-      encontrarDistribuicaoRotas(rotasCandidatas, distanciaAlvo, solucao, solucoesCandidatas, 0);
+      encontrarDistribuicaoRotas(candidatos, distanciaAlvo, solucao, solucoesCandidatas, 0);
       return solucao;
     }
 
@@ -34,33 +34,31 @@
     for(int i = 0; i < conj.size(); i++) {
       totalSoma += conj.get(i);
     }
-
-    return totalSoma/qtd;
-  }
-
-  public static List<List<Integer>> distribuirRotas(List<List<Integer>> possibilidades) {
-    List<List<Integer>> rotas = new ArrayList<List<Integer>>(3);
-    rotas.add(new ArrayList());
+    return totalSoma/qtd; 
+  } 
+  public static List<List<Integer>> distribuirRotas(List<List<Integer>> possibilidades) { 
+    List<List<Integer>> rotas = new ArrayList<List<Integer>>(3); rotas.add(new ArrayList());
     rotas.add(new ArrayList());
     rotas.add(new ArrayList());
 
-    for(int i = 0; i < possibilidades.size(); i++) {
+    rotas.get(0).addAll(possibilidades.get(0));
+    rotas.get(1).addAll(possibilidades.get(1));
+    rotas.get(2).addAll(possibilidades.get(2));
+    
+  /*  for(int i = 0; i < possibilidades.size(); i++) {
       if(i > 2) {
         rotas.get(i%3).addAll(possibilidades.get(i));
+      } else {
+        rotas.get(i).addAll(possibilidades.get(i));
       }
-
-      rotas.get(i).addAll(possibilidades.get(i));
-    }
+    }*/
 
     return rotas;
   }
 
   public static List<Integer> atualizarTeste(List<List<Integer>> possibilidades, List<Integer> testes) {
     for(int i = 0; i < possibilidades.size(); i++) {
-      //testes.removeAll(possibilidades.get(i));
-      for(int j = 0; j < possibilidades.get(i).size(); j++) {
-        testes.remove(possibilidades.get(i).get(j));
-      }
+      testes.removeAll(possibilidades.get(i));
     }
 
     return testes;
@@ -114,11 +112,8 @@
     while(conjTeste.size() > 3) {
       int i = 0;
 
-      System.out.println("Conjunto de testes: " + conjTeste);
-      System.out.println();
-
       while(distPossiveis.size() == 0 && i < alvo) {
-        distPossiveis = distribuicaoRotas(conjTeste, alvo - i);
+        distPossiveis = distribuicaoRotas(conjTeste, alvo + i);
         i += 1;
       } 
 
@@ -139,12 +134,18 @@
   }
 
   public static void main(String[] args) {
-    List<int[]> conjTeste = GeradorDeProblemas.geracaoDeRotas(6, 10, 0.8);
     List<List<Integer>> distribuicaoDasRotas;
-    for(int i = 0; i < conjTeste.size(); i++) {
-      distribuicaoDasRotas = resolver(converterParaLista(conjTeste.get(i)));
-      printDistribuicaoRotas(distribuicaoDasRotas);
-      System.out.println();
-    }
+
+    System.out.println("Conjunto 01: ");
+    int[] rotasCandidatas = {40,36,38,29,32,28,31,35,31,30,32,30,29,39,35,38,39,35,32,38,32,33,29,33,29,39,28};
+    distribuicaoDasRotas = resolver(converterParaLista(rotasCandidatas));
+    printDistribuicaoRotas(distribuicaoDasRotas);
+    System.out.println();
+
+    System.out.println("Conjunto 02: ");
+    int[] rotasCandidatas2 = {32,51,32,43,42,30,42,51,43,51,29,25,27,32,29,55,43,29,32,44,55,29,53,30,24,27};
+    distribuicaoDasRotas = resolver(converterParaLista(rotasCandidatas2));
+    printDistribuicaoRotas(distribuicaoDasRotas);
+    System.out.println();
   } 
 }
